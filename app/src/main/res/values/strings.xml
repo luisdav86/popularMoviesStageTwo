@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+
+    <string name="title_main_activity">Movies</string>
+    <string name="title_detail_activity">Detail</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="content_authority">com.example.luisa.popularmovies</string>
+
+    <string name="sync_account_type">com.example.luisa</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="pref_movie_order">Movie order</string>
+
+
+    <!-- Label for the temperature units preference [CHAR LIMIT=30] -->
+    <string name="pref_units_label">Movies order</string>
+
+    <!-- Label for metric option in temperature unit preference [CHAR LIMIT=25] -->
+    <string name="pref_movie_label_popular">Most Popular</string>
+
+    <!-- Label for imperial option in temperature unit preference [CHAR LIMIT=25] -->
+    <string name="pref_movie_label_highest_rated">Highest rated</string>
+
+    <string name="pref_movie_key" translatable="false">MovieOrder</string>
+
+    <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_movie_popular" translatable="false">popular</string>
+
+    <!-- Value in SharedPreferences for metric temperature unit option [CHAR LIMIT=NONE] -->
+    <string name="pref_movie_highest_rated" translatable="false">rated</string>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="images_url">http://image.tmdb.org/t/p/</string>
+
+    <string name="images_size">w185</string>
+
+    <string name="apy_key">1a6321ee87822a379dbf9f8f2c37107e</string>
+
+</resources>
