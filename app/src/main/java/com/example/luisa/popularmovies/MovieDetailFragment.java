@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -35,8 +36,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     private TextView overview;
     private RatingBar average;
     private TextView releaseDate;
+    private ListView trailers;
 
-    private static final int DETAIL_LOADER = 0;
+    private static final int MOVIE_DETAIL_LOADER = 0;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -63,28 +65,32 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         this.overview = (TextView) view.findViewById(R.id.fragment_movie_detail_overview);
         this.average = (RatingBar) view.findViewById(R.id.fragment_movie_detail_ratingBar);
         this.releaseDate = (TextView) view.findViewById(R.id.fragment_movie_detail_release_date);
+        this.trailers = (ListView) view.findViewById(R.id.fragment_movie_detail_trailers);
+
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        getLoaderManager().initLoader(MOVIE_DETAIL_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (null != mUri) {
-            // Now create and return a CursorLoader that will take care of
-            // creating a Cursor for the data being displayed.
-            return new CursorLoader(
-                    getActivity(),
-                    mUri,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+        if (id == MOVIE_DETAIL_LOADER) {
+            if (null != mUri) {
+                // Now create and return a CursorLoader that will take care of
+                // creating a Cursor for the data being displayed.
+                return new CursorLoader(
+                        getActivity(),
+                        mUri,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            }
         }
         return null;
     }
@@ -95,30 +101,32 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             long id = MoviesContract.MovieEntry.getIdFromUri(uri);
             Uri updatedUri = MoviesContract.MovieEntry.buildMovieWithId(id);
             mUri = updatedUri;
-            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+            getLoaderManager().restartLoader(MOVIE_DETAIL_LOADER, null, this);
         }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst()) {
-            try {
-                Movie movie = DataAccessObject.mapItem(data, Movie.class);
-                this.title.setText(movie.getOriginalTitle());
-                this.average.setVisibility(View.VISIBLE);
-                this.average.setNumStars(5);
-                this.average.setRating(movie.getVoteAverage() / 2F);
-                this.overview.setText(movie.getOverview());
-                this.releaseDate.setText(formateDateFromstring("yyyy-MM-dd", "dd, MMM yyyy", movie.getReleaseDate()));
+        if(loader.getId() == MOVIE_DETAIL_LOADER) {
+            if (data != null && data.moveToFirst()) {
+                try {
+                    Movie movie = DataAccessObject.mapItem(data, Movie.class);
+                    this.title.setText(movie.getOriginalTitle());
+                    this.average.setVisibility(View.VISIBLE);
+                    this.average.setNumStars(5);
+                    this.average.setRating(movie.getVoteAverage() / 2F);
+                    this.overview.setText(movie.getOverview());
+                    this.releaseDate.setText(formateDateFromstring("yyyy-MM-dd", "dd, MMM yyyy", movie.getReleaseDate()));
 
-                Picasso.with(this.getActivity()).load(getString(R.string.images_url) + getString(R.string.images_size) + movie.getPosterPath())
-                        .fit()
-                        .centerCrop()
-                        .into(this.thumbail);
-            } catch (java.lang.InstantiationException e) {
-                LogIt.e(this, e, e.getMessage());
-            } catch (IllegalAccessException e) {
-                LogIt.e(this, e, e.getMessage());
+                    Picasso.with(this.getActivity()).load(getString(R.string.images_url) + getString(R.string.images_size) + movie.getPosterPath())
+                            .fit()
+                            .centerCrop()
+                            .into(this.thumbail);
+                } catch (java.lang.InstantiationException e) {
+                    LogIt.e(this, e, e.getMessage());
+                } catch (IllegalAccessException e) {
+                    LogIt.e(this, e, e.getMessage());
+                }
             }
         }
     }

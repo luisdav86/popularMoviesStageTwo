@@ -3,13 +3,10 @@ package com.example.luisa.popularmovies.core;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-import com.example.luisa.popularmovies.entity.Movie;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -110,7 +107,7 @@ public class DatabaseUtil {
                     getDatabaseFieldType(field)));
 
             // Add the primary key constraint.
-            if (databaseField.primaryKey()) {
+            if (databaseField.primaryKey() && getDatabaseFieldType(field) == DatabaseFieldType.INTEGER ) {
                 statement
                         .append(databaseField.autoincrement() ? STATEMENT_PRIMARY_KEY_AUTOINCREMENT
                                 : STATEMENT_PRIMARY_KEY);

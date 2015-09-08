@@ -15,7 +15,10 @@ import com.example.luisa.popularmovies.R;
 import com.example.luisa.popularmovies.Utility;
 import com.example.luisa.popularmovies.core.DataAccessObject;
 import com.example.luisa.popularmovies.data.MoviesContract;
+import com.example.luisa.popularmovies.entity.Movie;
 import com.example.luisa.popularmovies.rest.MovieRestService;
+
+import java.util.List;
 
 /**
  * Created by LuisA on 8/28/2015.
@@ -33,8 +36,15 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        String apiKey = getContext().getString(R.string.apy_key);
+        List<Movie> movies= MovieRestService.getMovies(Utility.getPreferredLocation(getContext()), apiKey).getResults();
+
         getContext().getContentResolver().bulkInsert(MoviesContract.MovieEntry.CONTENT_URI
-                , DataAccessObject.toContentValues(MovieRestService.getMovies(Utility.getPreferredLocation(getContext()), getContext().getString(R.string.apy_key)).getResults()));
+                , DataAccessObject.toContentValues(movies));
+        for (Movie movie: movies) {
+            DataAccessObject.bulkInsert(MovieRestService.getRelatedVideos(movie.getId(), apiKey).getResults());
+            DataAccessObject.bulkInsert(MovieRestService.getRelatedReviews(movie.getId(), apiKey).getResults());
+        }
     }
 
     public static void syncImmediately(Context context) {

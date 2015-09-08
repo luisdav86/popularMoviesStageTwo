@@ -1,9 +1,12 @@
 package com.example.luisa.popularmovies.entity;
 
+import android.provider.BaseColumns;
+
 import com.example.luisa.popularmovies.core.BaseBusinessObject;
 import com.example.luisa.popularmovies.core.DatabaseField;
 import com.example.luisa.popularmovies.core.DatabaseTable;
 import com.example.luisa.popularmovies.data.DBConstants;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
@@ -12,6 +15,11 @@ import com.google.gson.annotations.SerializedName;
  */
 @DatabaseTable(name = DBConstants.MOVIES_TABLE_NAME)
 public class Movie extends BaseBusinessObject {
+
+    @DatabaseField(name = BaseColumns._ID, primaryKey = true, autoincrement = true)
+    @SerializedName("id")
+    @Expose
+    protected long id = DEFAULT_ID;
 
     @DatabaseField(name = DBConstants.MovieColumns.ORIGINAL_TITLE)
     @SerializedName(value = "original_title")
@@ -37,7 +45,13 @@ public class Movie extends BaseBusinessObject {
     @SerializedName(value = "release_date")
     private String releaseDate;
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getPopularity() {
         return popularity;

@@ -40,9 +40,9 @@
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:numStars="0"
-                android:rating="0" />
+                android:rating="0"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/fragment_movie_detail_release_date"
@@ -60,4 +60,9 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ListView
+        android:id="@+id/fragment_movie_detail_trailers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
 </LinearLayout>

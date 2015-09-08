@@ -1,14 +1,10 @@
 package com.example.luisa.popularmovies.core;
 
-import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.BaseColumns;
 
 import com.example.luisa.popularmovies.MoviesApp;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -26,19 +22,6 @@ public class DataAccessObject {
     public static final long DEFAULT_ID = -1;
 
     private static SQLiteDatabase db = null;
-
-    @DatabaseField(name = BaseColumns._ID, primaryKey = true, autoincrement = true)
-    @SerializedName("id")
-    @Expose
-    protected long id = DEFAULT_ID;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public static ICoreDb getHelper() {
         return MoviesApp.getInstance().getHelper();
@@ -65,7 +48,6 @@ public class DataAccessObject {
                 LogIt.e(DataAccessObject.class, e, e.getMessage());
             } finally {
                 db.endTransaction();
-                getHelper().close();
             }
         }
         return 0;
@@ -139,10 +121,8 @@ public class DataAccessObject {
                     .getAnnotation(DatabaseField.class);
             if (databaseField != null) {
                 try {
-                    if (!field.getName().equals("id") || id != DEFAULT_ID) {
-                        field.setAccessible(true);
-                        bindFieldValue(contentValues, databaseField, field);
-                    }
+                    field.setAccessible(true);
+                    bindFieldValue(contentValues, databaseField, field);
                 } catch (IllegalArgumentException e) {
                     LogIt.e(this, e, e.getMessage());
                 } catch (IllegalAccessException e) {

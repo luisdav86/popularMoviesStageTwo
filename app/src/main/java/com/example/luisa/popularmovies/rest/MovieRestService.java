@@ -25,14 +25,11 @@ public class MovieRestService {
         @GET(API_FIELDS)
         MovieRequest getMovies(@Query("sort_by") String sortBy, @Query("api_key") String apyKey);
 
-        //http://api.themoviedb.org/3/movie/44947/reviews??api_key=1a6321ee87822a379dbf9f8f2c37107e
-        //http://api.themoviedb.org/3/movie/44947/reviews?&api_key=1a6321ee87822a379dbf9f8f2c37107e
         @GET(API_REVIEW_FIELDS)
-        Object getReviews(@Path("id") String id, @Query("api_key") String apyKey);
+        ReviewRequest getReviews(@Path("id") String id, @Query("api_key") String apyKey);
 
-        //http://api.themoviedb.org/3/movie/44947/videos?&api_key=1a6321ee87822a379dbf9f8f2c37107e
         @GET(API_VIDEOS_FIELDS)
-        Object getVideos(@Path("id") String id, @Query("api_key") String apyKey);
+        VideoRequest getVideos(@Path("id") String id, @Query("api_key") String apyKey);
     }
 
     public static IMovies createRestAdapter() {
@@ -49,11 +46,11 @@ public class MovieRestService {
         return createRestAdapter().getMovies(sortCriteria, apiKey);
     }
 
-    public static Object getRelatedReviews(int id, String apiKey) {
-        return createRestAdapter().getReviews(Integer.toString(id), apiKey);
+    public static ReviewRequest getRelatedReviews(long id, String apiKey) {
+        return createRestAdapter().getReviews(Long.toString(id), apiKey);
     }
 
-    public static Object getRelatedVideos(int id, String apiKey) {
-        return createRestAdapter().getVideos(Integer.toString(id), apiKey);
+    public static VideoRequest getRelatedVideos(long id, String apiKey) {
+        return createRestAdapter().getVideos(Long.toString(id), apiKey);
     }
 }

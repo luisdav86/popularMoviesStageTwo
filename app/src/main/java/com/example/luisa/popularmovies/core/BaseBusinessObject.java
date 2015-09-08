@@ -1,9 +1,5 @@
 package com.example.luisa.popularmovies.core;
 
-import android.text.TextUtils;
-
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,10 +9,6 @@ public class BaseBusinessObject extends DataAccessObject{
 
     public BaseBusinessObject() {
 
-    }
-
-    public BaseBusinessObject(long id) {
-        this.id = id;
     }
 
     public List<? extends BaseBusinessObject> findAll(){
