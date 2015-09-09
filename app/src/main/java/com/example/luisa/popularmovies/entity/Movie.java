@@ -2,7 +2,7 @@ package com.example.luisa.popularmovies.entity;
 
 import android.provider.BaseColumns;
 
-import com.example.luisa.popularmovies.core.BaseBusinessObject;
+import com.example.luisa.popularmovies.core.DataAccessObject;
 import com.example.luisa.popularmovies.core.DatabaseField;
 import com.example.luisa.popularmovies.core.DatabaseTable;
 import com.example.luisa.popularmovies.data.DBConstants;
@@ -14,12 +14,12 @@ import com.google.gson.annotations.SerializedName;
  * Created by LuisA on 8/27/2015.
  */
 @DatabaseTable(name = DBConstants.MOVIES_TABLE_NAME)
-public class Movie extends BaseBusinessObject {
+public class Movie extends DataAccessObject<Long> {
 
     @DatabaseField(name = BaseColumns._ID, primaryKey = true, autoincrement = true)
     @SerializedName("id")
     @Expose
-    protected long id = DEFAULT_ID;
+    protected long id = -1;
 
     @DatabaseField(name = DBConstants.MovieColumns.ORIGINAL_TITLE)
     @SerializedName(value = "original_title")
@@ -45,8 +45,19 @@ public class Movie extends BaseBusinessObject {
     @SerializedName(value = "release_date")
     private String releaseDate;
 
+    @DatabaseField(name = DBConstants.MovieColumns.FAVORITE)
+    private boolean favorite;
+
     public long getId() {
         return id;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public void setId(long id) {
@@ -101,4 +112,8 @@ public class Movie extends BaseBusinessObject {
         this.voteAverage = voteAverage;
     }
 
+    @Override
+    public Long getPrimaryKey() {
+        return getId();
+    }
 }

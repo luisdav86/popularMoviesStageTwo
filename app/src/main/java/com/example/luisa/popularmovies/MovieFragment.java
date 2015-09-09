@@ -107,16 +107,31 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String sortOrder = "";
+        String preference = Utility.getPreferredLocation(getActivity());
+        String selection = "";
+        String[] selectionArgs = null;
 
-        String sortOrder = (Utility.getPreferredLocation(getActivity()).equals(getString(R.string.pref_movie_popular)) ? DBConstants.MovieColumns.POPULARITY : DBConstants.MovieColumns.VOTE_AVERAGE) + " DESC";
+        if (preference.equals(getString(R.string.pref_movie_popular))) {
+            sortOrder = DBConstants.MovieColumns.POPULARITY;
+        } else if (preference.equals(getString(R.string.pref_movie_highest_rated))) {
+            sortOrder = DBConstants.MovieColumns.VOTE_AVERAGE;
+        }
 
         Uri weatherForLocationUri = MoviesContract.MovieEntry.CONTENT_URI;
+
+        if (sortOrder == "") {
+            selection = DBConstants.MovieColumns.FAVORITE + " = ?";
+            selectionArgs = new String[]{String.valueOf(1)};
+        } else {
+            sortOrder += " DESC";
+        }
 
         return new CursorLoader(getActivity(),
                 weatherForLocationUri,
                 null,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 sortOrder);
     }
 

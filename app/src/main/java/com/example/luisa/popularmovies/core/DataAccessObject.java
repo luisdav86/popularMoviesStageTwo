@@ -3,6 +3,7 @@ package com.example.luisa.popularmovies.core;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.BaseColumns;
 
 import com.example.luisa.popularmovies.MoviesApp;
 
@@ -17,17 +18,27 @@ import java.util.List;
 /**
  * Created by LuisA on 8/28/2015.
  */
-public class DataAccessObject {
+public abstract class DataAccessObject<T> {
 
     public static final long DEFAULT_ID = -1;
 
     private static SQLiteDatabase db = null;
 
+    public abstract T getPrimaryKey();
+
     public static ICoreDb getHelper() {
         return MoviesApp.getInstance().getHelper();
     }
 
-    public static int bulkInsert(List<? extends BaseBusinessObject> objects) {
+    public int update() {
+        SQLiteDatabase db = getDatabase();
+        ContentValues values = getContentValues();
+        String selection = BaseColumns._ID + "=?";
+        String[] selectionArgs = new String[] { String.valueOf(getPrimaryKey()) };
+        return db.update(getTableName(), values, selection, selectionArgs);
+    }
+
+    public static int bulkInsert(List<? extends DataAccessObject> objects) {
         String tableName = "";
         SQLiteDatabase db = getDatabase();
 
@@ -36,7 +47,7 @@ public class DataAccessObject {
             int returnCount = 0;
             try {
                 db.beginTransaction();
-                for (BaseBusinessObject object : objects) {
+                for (DataAccessObject object : objects) {
                     long _id = db.insert(tableName, null, object.getContentValues());
                     if (_id != -1) {
                         returnCount++;
@@ -53,7 +64,7 @@ public class DataAccessObject {
         return 0;
     }
 
-    public static ContentValues[] toContentValues(List<? extends BaseBusinessObject> objects) {
+    public static ContentValues[] toContentValues(List<? extends DataAccessObject> objects) {
         if (objects == null) {
             return null;
         }
@@ -254,7 +265,7 @@ public class DataAccessObject {
     }
 
     public static <T extends DataAccessObject> T mapItem(Cursor cursor,
-                                                          Class<T> clasz) throws InstantiationException,
+                                                         Class<T> clasz) throws InstantiationException,
             IllegalAccessException {
         T item = null;
         item = clasz.newInstance();

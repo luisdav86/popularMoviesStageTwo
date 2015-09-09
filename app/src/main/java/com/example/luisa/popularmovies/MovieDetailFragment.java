@@ -10,14 +10,18 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.example.luisa.popularmovies.Manager.MovieManager;
 import com.example.luisa.popularmovies.core.DataAccessObject;
 import com.example.luisa.popularmovies.core.LogIt;
+import com.example.luisa.popularmovies.data.DBConstants;
 import com.example.luisa.popularmovies.data.MoviesContract;
+import com.example.luisa.popularmovies.data.MoviesDbHelper;
 import com.example.luisa.popularmovies.entity.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -30,6 +34,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     static final String DETAIL_URI = "URI";
 
     private Uri mUri;
+    private Movie mMovie = null;
+    private MovieManager mManager = MovieManager.getInstance();
 
     private TextView title;
     private ImageView thumbail;
@@ -37,6 +43,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     private RatingBar average;
     private TextView releaseDate;
     private ListView trailers;
+    private TrailerAdapter mTrailerAdapter;
+    private Button favoriteButton;
 
     private static final int MOVIE_DETAIL_LOADER = 0;
 
@@ -66,8 +74,37 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         this.average = (RatingBar) view.findViewById(R.id.fragment_movie_detail_ratingBar);
         this.releaseDate = (TextView) view.findViewById(R.id.fragment_movie_detail_release_date);
         this.trailers = (ListView) view.findViewById(R.id.fragment_movie_detail_trailers);
+        this.favoriteButton = (Button) view.findViewById(R.id.fragment_movie_detail_favorite_button);
+        this.favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MovieDetailFragment.this.saveMoviePreferenceFavorite();
+            }
+        });
 
+        mTrailerAdapter = new TrailerAdapter(getActivity(), null, 0);
+        this.trailers.setAdapter(mTrailerAdapter);
+        loadTrailers();
         return view;
+    }
+
+    private void saveMoviePreferenceFavorite() {
+        mManager.changeMoviePreferenceFavorite(mMovie);
+        this.loadFavoriteButton();
+    }
+
+    private void loadTrailers() {
+
+        MoviesDbHelper mOpenHelper = new MoviesDbHelper(this.getActivity());
+        mTrailerAdapter.swapCursor(mOpenHelper.getReadableDatabase().query(
+                DBConstants.VIDEO_TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        ));
     }
 
     @Override
@@ -107,26 +144,43 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(loader.getId() == MOVIE_DETAIL_LOADER) {
+        if (loader.getId() == MOVIE_DETAIL_LOADER) {
             if (data != null && data.moveToFirst()) {
                 try {
-                    Movie movie = DataAccessObject.mapItem(data, Movie.class);
-                    this.title.setText(movie.getOriginalTitle());
-                    this.average.setVisibility(View.VISIBLE);
-                    this.average.setNumStars(5);
-                    this.average.setRating(movie.getVoteAverage() / 2F);
-                    this.overview.setText(movie.getOverview());
-                    this.releaseDate.setText(formateDateFromstring("yyyy-MM-dd", "dd, MMM yyyy", movie.getReleaseDate()));
-
-                    Picasso.with(this.getActivity()).load(getString(R.string.images_url) + getString(R.string.images_size) + movie.getPosterPath())
-                            .fit()
-                            .centerCrop()
-                            .into(this.thumbail);
+                    mMovie = DataAccessObject.mapItem(data, Movie.class);
+                    this.loadMovieData();
                 } catch (java.lang.InstantiationException e) {
                     LogIt.e(this, e, e.getMessage());
                 } catch (IllegalAccessException e) {
                     LogIt.e(this, e, e.getMessage());
                 }
+            }
+        }
+    }
+
+    private void loadMovieData() {
+        if (mMovie != null) {
+            this.loadFavoriteButton();
+            this.title.setText(mMovie.getOriginalTitle());
+            this.average.setVisibility(View.VISIBLE);
+            this.average.setNumStars(5);
+            this.average.setRating(mMovie.getVoteAverage() / 2F);
+            this.overview.setText(mMovie.getOverview());
+            this.releaseDate.setText(formateDateFromstring("yyyy-MM-dd", "dd, MMM yyyy", mMovie.getReleaseDate()));
+
+            Picasso.with(this.getActivity()).load(getString(R.string.images_url) + getString(R.string.images_size) + mMovie.getPosterPath())
+                    .fit()
+                    .centerCrop()
+                    .into(this.thumbail);
+        }
+    }
+
+    private void loadFavoriteButton() {
+        if (mMovie != null) {
+            if (this.mMovie.isFavorite()) {
+                this.favoriteButton.setBackgroundColor(getResources().getColor(R.color.sunshine_dark_blue));
+            } else {
+                this.favoriteButton.setBackgroundColor(getResources().getColor(R.color.sunshine_light_blue));
             }
         }
     }

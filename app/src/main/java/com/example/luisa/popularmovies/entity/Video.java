@@ -2,7 +2,7 @@ package com.example.luisa.popularmovies.entity;
 
 import android.provider.BaseColumns;
 
-import com.example.luisa.popularmovies.core.BaseBusinessObject;
+import com.example.luisa.popularmovies.core.DataAccessObject;
 import com.example.luisa.popularmovies.core.DatabaseField;
 import com.example.luisa.popularmovies.core.DatabaseTable;
 import com.example.luisa.popularmovies.data.DBConstants;
@@ -13,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by LuisA on 8/31/2015.
  */
 @DatabaseTable(name = DBConstants.VIDEO_TABLE_NAME)
-public class Video extends BaseBusinessObject {
+public class Video extends DataAccessObject <String> {
 
     @DatabaseField(name = BaseColumns._ID, primaryKey = true)
     @SerializedName("id")
@@ -85,5 +85,10 @@ public class Video extends BaseBusinessObject {
     public void setType(String type) {
         this.type = type;
 
+    }
+
+    @Override
+    public String getPrimaryKey() {
+        return this.id;
     }
 }

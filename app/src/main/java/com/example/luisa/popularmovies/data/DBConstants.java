@@ -36,5 +36,6 @@ public class DBConstants {
         String OVERVIEW = "overview";
         String VOTE_AVERAGE = "vote_average";
         String RELEASE_DATE = "release_date";
+        String FAVORITE = "favorite";
     }
 }
