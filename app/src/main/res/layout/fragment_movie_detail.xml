@@ -100,10 +100,24 @@
             android:text="@string/fragment_movie_detail_trailer_title"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <ListView
-            android:id="@+id/fragment_movie_detail_trailers"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ListView
+                android:id="@+id/fragment_movie_detail_trailers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></ListView>
+
+            <ListView
+                android:id="@+id/fragment_movie_detail_review"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></ListView>
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
 

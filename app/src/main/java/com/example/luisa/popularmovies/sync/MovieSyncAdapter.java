@@ -14,6 +14,8 @@ import android.os.Bundle;
 import com.example.luisa.popularmovies.R;
 import com.example.luisa.popularmovies.Utility;
 import com.example.luisa.popularmovies.core.DataAccessObject;
+import com.example.luisa.popularmovies.core.LogIt;
+import com.example.luisa.popularmovies.data.DBConstants;
 import com.example.luisa.popularmovies.data.MoviesContract;
 import com.example.luisa.popularmovies.data.ReviewContract;
 import com.example.luisa.popularmovies.data.VideoContract;
@@ -22,7 +24,9 @@ import com.example.luisa.popularmovies.entity.Review;
 import com.example.luisa.popularmovies.entity.Video;
 import com.example.luisa.popularmovies.rest.MovieRestService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LuisA on 8/28/2015.
@@ -41,16 +45,32 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         String apiKey = getContext().getString(R.string.apy_key);
-        List<Movie> movies = MovieRestService.getMovies(Utility.getPreferredLocation(getContext()), apiKey).getResults();
-        ContentResolver resolver = getContext().getContentResolver();
-        resolver.bulkInsert(MoviesContract.MovieEntry.CONTENT_URI
-                , DataAccessObject.toContentValues(movies));
+        long movieId = -1;
+        try {
+            List<Movie> movies = MovieRestService.getMovies(Utility.getPreferredLocation(getContext()), apiKey).getResults();
+            ContentResolver resolver = getContext().getContentResolver();
+            resolver.bulkInsert(new MoviesContract().getBaseEntry().CONTENT_URI
+                    , DataAccessObject.toContentValues(movies));
 
-        for (Movie movie : movies) {
-            List<Review> reviews = MovieRestService.getRelatedReviews(movie.getId(), apiKey).getResults();
-            List<Video> videos = MovieRestService.getRelatedVideos(movie.getId(), apiKey).getResults();
-            resolver.bulkInsert(new ReviewContract().getBaseEntry().CONTENT_URI, DataAccessObject.toContentValues(reviews));
-            resolver.bulkInsert(new VideoContract().getBaseEntry().CONTENT_URI, DataAccessObject.toContentValues(videos));
+            for (Movie movie : movies) {
+
+                movieId = movie.getId();
+
+                Map<String, Object> movieIdKeyPar = new HashMap<>();
+                movieIdKeyPar.put(DBConstants.ReviewColumns.MOVIE_ID, movieId);
+
+                List<Review> reviews = MovieRestService.getRelatedReviews(movieId, apiKey).getResults();
+                resolver.bulkInsert(new ReviewContract().getBaseEntry().CONTENT_URI, DataAccessObject.toContentValues(reviews, movieIdKeyPar));
+
+                movieIdKeyPar = new HashMap<>();
+                movieIdKeyPar.put(DBConstants.VideoColumns.MOVIE_ID, movieId);
+                List<Video> videos = MovieRestService.getRelatedVideos(movieId, apiKey).getResults();
+                resolver.bulkInsert(new VideoContract().getBaseEntry().CONTENT_URI, DataAccessObject.toContentValues(videos, movieIdKeyPar));
+
+            }
+        } catch (Exception e )
+        {
+            LogIt.e(this, e, e.getMessage());
         }
     }
 

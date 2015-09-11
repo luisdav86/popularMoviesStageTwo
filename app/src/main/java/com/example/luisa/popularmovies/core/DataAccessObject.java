@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Pair;
 
 import com.example.luisa.popularmovies.MoviesApp;
 import com.example.luisa.popularmovies.data.DBConstants;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LuisA on 8/28/2015.
@@ -81,12 +83,24 @@ public abstract class DataAccessObject<T> {
     }
 
     public static ContentValues[] toContentValues(List<? extends DataAccessObject> objects) {
+        return toContentValues(objects, null);
+    }
+
+    public static ContentValues[] toContentValues(List<? extends DataAccessObject> objects, Map<String, Object> map) {
         if (objects == null) {
             return null;
         }
         ContentValues[] values = new ContentValues[objects.size()];
         for (int i = 0; i < objects.size(); i++) {
             values[i] = objects.get(i).getContentValues();
+            if (map != null) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    if (values[i].containsKey(entry.getKey())) {
+                        values[i].remove(entry.getKey());
+                    }
+                    values[i].put(entry.getKey(), String.valueOf(entry.getValue()));
+                }
+            }
         }
         return values;
     }

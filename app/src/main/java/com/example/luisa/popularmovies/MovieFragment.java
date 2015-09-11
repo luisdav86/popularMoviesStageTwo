@@ -16,7 +16,6 @@ import android.widget.ListView;
 
 import com.example.luisa.popularmovies.core.DataAccessObject;
 import com.example.luisa.popularmovies.data.DBConstants;
-import com.example.luisa.popularmovies.data.MoviesContracTest;
 import com.example.luisa.popularmovies.data.MoviesContract;
 import com.example.luisa.popularmovies.entity.Movie;
 import com.example.luisa.popularmovies.sync.MovieSyncAdapter;
@@ -59,7 +58,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 if (cursor != null) {
                     try {
                         ((Callback) getActivity())
-                                .onItemSelected(new MoviesContracTest().getBaseEntry().buildIdUri(DataAccessObject.mapItem(cursor, Movie.class).getId())
+                                .onItemSelected(new MoviesContract().getBaseEntry().buildIdUri(DataAccessObject.mapItem(cursor, Movie.class).getId())
                                 );
                     } catch (java.lang.InstantiationException e) {
                         e.printStackTrace();
@@ -119,7 +118,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             sortOrder = DBConstants.MovieColumns.VOTE_AVERAGE;
         }
 
-        Uri weatherForLocationUri = MoviesContract.MovieEntry.CONTENT_URI;
+        Uri weatherForLocationUri = new MoviesContract().getBaseEntry().CONTENT_URI;
 
         if (sortOrder == "") {
             selection = DBConstants.MovieColumns.FAVORITE + " = ?";
