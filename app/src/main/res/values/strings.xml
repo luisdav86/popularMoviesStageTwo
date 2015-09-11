@@ -6,6 +6,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="content_authority">com.example.luisa.popularmovies</string>
+    <string name="content_authority_review">com.example.luisa.popularmovies.review</string>
+    <string name="content_authority_video">com.example.luisa.popularmovies.video</string>
 
     <string name="sync_account_type">com.example.luisa</string>
 

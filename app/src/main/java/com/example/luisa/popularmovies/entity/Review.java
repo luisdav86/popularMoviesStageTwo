@@ -22,8 +22,10 @@ public class Review extends DataAccessObject<String> {
 
     @DatabaseField(name = DBConstants.ReviewColumns.MOVIE_ID)
     private String movieId;
+
     @DatabaseField(name = DBConstants.ReviewColumns.AUTHOR)
     private String author;
+
     @DatabaseField(name = DBConstants.ReviewColumns.CONTENT)
     private String content;
 

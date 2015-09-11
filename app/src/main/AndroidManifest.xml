@@ -40,8 +40,20 @@
         </activity>
 
         <provider
-            android:name=".data.MoviesProvider"
+            android:name=".data.MoviesProviderTest"
             android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
+
+        <provider
+            android:name=".data.ReviewProvider"
+            android:authorities="@string/content_authority_review"
+            android:exported="false"
+            android:syncable="true" />
+
+        <provider
+            android:name=".data.VideoProvider"
+            android:authorities="@string/content_authority_video"
             android:exported="false"
             android:syncable="true" />
 

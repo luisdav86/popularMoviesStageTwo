@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
 import com.example.luisa.popularmovies.MoviesApp;
+import com.example.luisa.popularmovies.data.DBConstants;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -30,11 +31,26 @@ public abstract class DataAccessObject<T> {
         return MoviesApp.getInstance().getHelper();
     }
 
+    public static Cursor query(Class<?> clasz, String[] columns, String selection,
+                               String[] selectionArgs, String groupBy, String having,
+                               String orderBy) {
+        SQLiteDatabase db = getDatabase();
+        return db.query(
+                getTableName(clasz),
+                columns,
+                selection,
+                selectionArgs,
+                groupBy,
+                having,
+                orderBy
+        );
+    }
+
     public int update() {
         SQLiteDatabase db = getDatabase();
         ContentValues values = getContentValues();
         String selection = BaseColumns._ID + "=?";
-        String[] selectionArgs = new String[] { String.valueOf(getPrimaryKey()) };
+        String[] selectionArgs = new String[]{String.valueOf(getPrimaryKey())};
         return db.update(getTableName(), values, selection, selectionArgs);
     }
 

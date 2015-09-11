@@ -15,7 +15,11 @@ import com.example.luisa.popularmovies.R;
 import com.example.luisa.popularmovies.Utility;
 import com.example.luisa.popularmovies.core.DataAccessObject;
 import com.example.luisa.popularmovies.data.MoviesContract;
+import com.example.luisa.popularmovies.data.ReviewContract;
+import com.example.luisa.popularmovies.data.VideoContract;
 import com.example.luisa.popularmovies.entity.Movie;
+import com.example.luisa.popularmovies.entity.Review;
+import com.example.luisa.popularmovies.entity.Video;
 import com.example.luisa.popularmovies.rest.MovieRestService;
 
 import java.util.List;
@@ -37,13 +41,16 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         String apiKey = getContext().getString(R.string.apy_key);
-        List<Movie> movies= MovieRestService.getMovies(Utility.getPreferredLocation(getContext()), apiKey).getResults();
-
-        getContext().getContentResolver().bulkInsert(MoviesContract.MovieEntry.CONTENT_URI
+        List<Movie> movies = MovieRestService.getMovies(Utility.getPreferredLocation(getContext()), apiKey).getResults();
+        ContentResolver resolver = getContext().getContentResolver();
+        resolver.bulkInsert(MoviesContract.MovieEntry.CONTENT_URI
                 , DataAccessObject.toContentValues(movies));
-        for (Movie movie: movies) {
-            DataAccessObject.bulkInsert(MovieRestService.getRelatedVideos(movie.getId(), apiKey).getResults());
-            DataAccessObject.bulkInsert(MovieRestService.getRelatedReviews(movie.getId(), apiKey).getResults());
+
+        for (Movie movie : movies) {
+            List<Review> reviews = MovieRestService.getRelatedReviews(movie.getId(), apiKey).getResults();
+            List<Video> videos = MovieRestService.getRelatedVideos(movie.getId(), apiKey).getResults();
+            resolver.bulkInsert(new ReviewContract().getBaseEntry().CONTENT_URI, DataAccessObject.toContentValues(reviews));
+            resolver.bulkInsert(new VideoContract().getBaseEntry().CONTENT_URI, DataAccessObject.toContentValues(videos));
         }
     }
 

@@ -19,7 +19,7 @@ public class MoviesContract {
     // the content provider.
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static final String PATH_MOVIES = "movies";
+    public static final String PATH_MOVIES = "base";
 
     /* Inner class that defines the table contents of the weather table */
     public static final class MovieEntry implements DBConstants.MovieColumns {
