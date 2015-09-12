@@ -39,9 +39,6 @@ import com.example.luisa.popularmovies.entity.Movie;
 import com.example.luisa.popularmovies.entity.Video;
 import com.squareup.picasso.Picasso;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,12 +54,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     private ShareActionProvider mShareActionProvider;
 
     private TextView title;
-    private ImageView thumbail;
+    private ImageView thumbnail;
     private TextView overview;
     private RatingBar average;
     private TextView releaseDate;
     private ListView trailers;
     private ListView reviews;
+    private LinearLayout reviewContainer;
+    private LinearLayout videoContainer;
     private VideoAdapter mVideoAdapter;
     private ReviewAdapter mReviewAdapter;
     private Button favoriteButton;
@@ -93,12 +92,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         this.title = (TextView) view.findViewById(R.id.fragment_movie_detail_original_title);
-        this.thumbail = (ImageView) view.findViewById(R.id.fragment_movie_detail_thumbail);
+        this.thumbnail = (ImageView) view.findViewById(R.id.fragment_movie_detail_thumbail);
         this.overview = (TextView) view.findViewById(R.id.fragment_movie_detail_overview);
         this.average = (RatingBar) view.findViewById(R.id.fragment_movie_detail_ratingBar);
         this.releaseDate = (TextView) view.findViewById(R.id.fragment_movie_detail_release_date);
         this.trailers = (ListView) view.findViewById(R.id.fragment_movie_detail_trailers);
         this.reviews = (ListView) view.findViewById(R.id.fragment_movie_detail_review);
+        this.reviewContainer = (LinearLayout) view.findViewById(R.id.fragment_movide_detail_review_container);
+        this.videoContainer = (LinearLayout) view.findViewById(R.id.fragment_movide_detail_trailer_container);
 
         this.reviews.setOnTouchListener(this.onListViewTouched);
         this.trailers.setOnTouchListener(this.onListViewTouched);
@@ -238,6 +239,10 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        int visible = View.GONE;
+        if (data != null && data.getCount() > 0) {
+            visible = View.VISIBLE;
+        }
         if (loader.getId() == MOVIE_DETAIL_LOADER) {
             if (data != null && data.moveToFirst()) {
                 try {
@@ -250,11 +255,13 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 }
             }
         } else if (loader.getId() == MOVIE_VIDEO_LOADER) {
+            this.videoContainer.setVisibility(visible);
             mVideoAdapter.swapCursor(data);
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareVideoIntent(getVideoByPosition(VIDEO_TO_SHARE)));
             }
         } else if (loader.getId() == MOVIE_REVIEW_LOADER) {
+            this.reviewContainer.setVisibility(visible);
             mReviewAdapter.swapCursor(data);
         }
     }
@@ -273,12 +280,12 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 Picasso.with(this.getActivity()).load(getString(R.string.images_url) + getString(R.string.images_size) + mMovie.getPosterPath())
                         .fit()
                         .centerCrop()
-                        .into(this.thumbail);
+                        .into(this.thumbnail);
             } else {
                 Picasso.with(this.getActivity()).load(mMovie.getLocalFileImage())
                         .fit()
                         .centerCrop()
-                        .into(this.thumbail);
+                        .into(this.thumbnail);
 
             }
         }
@@ -288,7 +295,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         if (mMovie != null) {
             if (this.mMovie.isFavorite()) {
                 if (!this.mMovie.hasLocalImage()) {
-                    BitmapDrawable bitmapDrawable = (BitmapDrawable) this.thumbail.getDrawable();
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) this.thumbnail.getDrawable();
                     if (bitmapDrawable != null) {
                         Bitmap bitmap = bitmapDrawable.getBitmap();
                         mMovie.setLocalImagePath(Utility.saveToInternalStorage(getActivity(), bitmap, this.mMovie));
