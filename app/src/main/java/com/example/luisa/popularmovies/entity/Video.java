@@ -13,7 +13,9 @@ import com.google.gson.annotations.SerializedName;
  * Created by LuisA on 8/31/2015.
  */
 @DatabaseTable(name = DBConstants.VIDEO_TABLE_NAME)
-public class Video extends DataAccessObject <String> {
+public class Video extends DataAccessObject<String> {
+
+    public static final String VIDEOS_URL = "http://www.youtube.com/watch?v=";
 
     @DatabaseField(name = BaseColumns._ID, primaryKey = true)
     @SerializedName("id")
@@ -84,7 +86,10 @@ public class Video extends DataAccessObject <String> {
 
     public void setType(String type) {
         this.type = type;
+    }
 
+    public String getFullUrl(){
+        return this.VIDEOS_URL + getKey();
     }
 
     @Override

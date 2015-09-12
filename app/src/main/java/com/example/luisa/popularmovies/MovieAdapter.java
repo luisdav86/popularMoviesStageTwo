@@ -17,6 +17,10 @@ import com.example.luisa.popularmovies.core.LogIt;
 import com.example.luisa.popularmovies.entity.Movie;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.io.File;
+
 /**
  * Created by Arcia on 8/28/2015.
  */
@@ -43,7 +47,16 @@ public class MovieAdapter extends CursorAdapter {
             Movie movie = DataAccessObject.mapItem(cursor, Movie.class);
             viewHolder.title.setText(movie.getOriginalTitle());
             viewHolder.rating.setRating(movie.getVoteAverage() / 2.0F);
-            Picasso.with(context).load(context.getString(R.string.images_url) + context.getString(R.string.images_size) + movie.getPosterPath()).fit().centerCrop().into(viewHolder.imageView);
+
+            if (!movie.hasLocalImage()) {
+                Picasso.with(context).load(context.getString(R.string.images_url) + context.getString(R.string.images_size) + movie.getPosterPath()).fit().centerCrop().into(viewHolder.imageView);
+            } else {
+                Picasso.with(context).load(movie.getLocalFileImage())
+                        .fit()
+                        .centerCrop()
+                        .into(viewHolder.imageView);
+
+            }
         } catch (InstantiationException e) {
             LogIt.e(this, e, e.getMessage());
         } catch (IllegalAccessException e) {

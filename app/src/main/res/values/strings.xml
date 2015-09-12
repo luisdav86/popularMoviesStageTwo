@@ -47,8 +47,12 @@
     <string name="images_size">w185</string>
 
     <string name="fragment_movie_detail_trailer_title">Trailers :</string>
+    <string name="fragment_movie_detail_review_title">Reviews :</string>
+    <string name="action_share">Share</string>
 
     <string name="fragment_movie_detail_favorite_button">Mark as favorite</string>
+    <string name="fragment_movie_detail_favorite_button_selected">Favorite</string>
+
     <string name="list_item_trailer_title">Trailer</string>
 
     <string name="apy_key">1a6321ee87822a379dbf9f8f2c37107e</string>

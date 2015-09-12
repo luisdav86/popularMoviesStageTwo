@@ -9,6 +9,10 @@ import com.example.luisa.popularmovies.data.DBConstants;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.io.File;
+
 
 /**
  * Created by LuisA on 8/27/2015.
@@ -47,6 +51,17 @@ public class Movie extends DataAccessObject<Long> {
 
     @DatabaseField(name = DBConstants.MovieColumns.FAVORITE)
     private boolean favorite;
+
+    @DatabaseField(name = DBConstants.MovieColumns.LOCAL_IMAGE_PATH)
+    private String localImagePath;
+
+    public String getLocalImagePath() {
+        return localImagePath;
+    }
+
+    public void setLocalImagePath(String localImagePath) {
+        this.localImagePath = localImagePath;
+    }
 
     public long getId() {
         return id;
@@ -110,6 +125,14 @@ public class Movie extends DataAccessObject<Long> {
 
     public void setVoteAverage(float voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    public boolean hasLocalImage(){
+        return !StringUtils.isEmpty(this.getLocalImagePath());
+    }
+
+    public File getLocalFileImage(){
+        return new File(this.getLocalImagePath(), this.getPrimaryKey() + ".jpg");
     }
 
     @Override

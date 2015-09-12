@@ -37,5 +37,6 @@ public class DBConstants {
         String VOTE_AVERAGE = "vote_average";
         String RELEASE_DATE = "release_date";
         String FAVORITE = "favorite";
+        String LOCAL_IMAGE_PATH = "local_image_path";
     }
 }
