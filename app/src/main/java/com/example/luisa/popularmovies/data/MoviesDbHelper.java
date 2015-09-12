@@ -36,11 +36,6 @@ public class MoviesDbHelper extends SQLiteOpenHelper implements ICoreDb {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion < 2) {
-          //  DatabaseUtil.createTable(Video.class, db);
-           // DatabaseUtil.createTable(Review.class, db);
-        }
-        db.setVersion(DATABASE_VERSION);
     }
 
     @Override
